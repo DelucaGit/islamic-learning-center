@@ -1,76 +1,25 @@
 # Development log
 
-Human-readable notes about what we worked on, what went wrong, and how we fixed it.
+Notes I keep for myself about what happened on a given day.
 
 ---
 
-## 2026-05-02 (Saturday)
+## Saturday, May 2, 2026
 
-### Big picture
+Today was mostly about getting the backend project off the ground instead of it living only in my head or in a loose plan.
 
-We turned an empty GitHub repo into a **runnable Spring Boot backend (step 1)** for an Islamic sciences learning platform: Maven, PostgreSQL + Flyway, core database tables, a health API, basic tests, and a way to run locally without putting secrets in git.
+I finally pointed my local folder at the real GitHub repo (`islamic-learning-center`). For a while Git was acting weird because the folder didn’t have its own repo and it was picking up something higher up on my machine—once that was sorted and `origin` pointed at the right URL, things felt normal again.
 
----
+The big chunk of work was the first real version of the Spring app: Maven, Spring Boot, Postgres, Flyway so the tables actually get created when I start the app, and the basic entities for users, courses, enrollments, payments, and refresh tokens (even though login isn’t built yet). There’s a simple health endpoint so I can prove the server is alive, and a tiny test so CI has something to run. Speaking of CI, GitHub Actions now runs the Maven verify step when I push—that’s reassuring.
 
-### What we built and decided
+I spent more time than I expected on configuration. I didn’t want passwords or connection strings sitting in files that get committed, so everything sensitive goes through environment variables. I copied an example file for the variable names, and I use a `.env.local` file that never goes to git. Cursor doesn’t automatically load that file when I run Maven from the terminal—I learned that the hard way when Spring yelled that the JDBC URL had to start with `jdbc`. Turns out the terminal run doesn’t see `.env.local`; the Run/Debug launch config does (similar vibe to how I used to set env vars in IntelliJ). I also had stray spaces after the equals signs in my env file once, which broke things in a confusing way until I noticed.
 
-- **Spring Boot 3.4** with **Maven** (`pom.xml`, Maven Wrapper). Package `com.islamiclearningcenter`.
-- **PostgreSQL** as the database engine: **Flyway** migration `V1` creating `users`, `courses`, `enrollments`, `payments`, `refresh_tokens` (ready for JWT and billing later).
-- **JPA entities and repositories** for those tables, plus a tiny **`UserService`** and a **Mockito** unit test so `mvn verify` does something useful.
-- **Public API:** `GET /api/v1/health` and Actuator health.
-- **Configuration:** datasource URL, username, and password come **only** from environment variables—nothing sensitive committed in `application.yml`.
-- **`env.example`** lists variable names only (no real passwords).
-- **GitHub Actions** CI runs `./mvnw -B verify` on pushes/PRs to `main` (Java 17 in CI, matches the POM).
-- **Cursor / VS Code:** `.vscode/launch.json` runs the main class and loads **`.env.local`** so running from the IDE feels closer to IntelliJ “Run configuration” (secrets stay in a gitignored file).
-- **Git workflow rule:** the agent should **commit** when appropriate but **`git push` only when you explicitly say so** in that message (we wrote that into `.cursor/rules/git-no-push.mdc` and refined the wording later in the day).
+I had a moment of panic with Postgres where I couldn’t remember which user went with my `lms_db` database and you can’t “look up” a password like you can reset a website password—you just set a new one as the superuser and move on. Annoying but fine.
 
-We also aligned the plan (separate document in Cursor) around things like JWT refresh tokens, a `Payment` table tied to users, RDS in AWS, human-readable code, Mockito tests, phased CI/Docker/CD, and local Postgres with **pgAdmin** (not Docker as the default dev database).
+There was a Flyway warning about Postgres 18 being newer than what they officially test; the migration still ran, so I’m not losing sleep over it.
 
----
+On the git side, I decided I want commits to happen regularly but pushes only when I actually say to push—so the agent doesn’t surprise me by sending half-baked stuff to GitHub. We wrote that into a Cursor rule and tweaked the wording once I was sure what I wanted.
 
-### Problems we hit and how we solved them
+What’s *not* done: no login, no JWT, no real API beyond health. That’s the next chapter. For today I’m happy that the app boots, talks to my local database, and I can hit the health URL in a browser or Postman.
 
-**1. Git was pointing at the wrong remote**  
-The project folder didn’t have its own `.git` at first, so Git commands were picking up a parent repo.  
-**Fix:** `git init` in the project folder, set `origin` to `https://github.com/DelucaGit/islamic-learning-center.git`, and track `main` from GitHub.
-
-**2. `mvn` wasn’t on PATH**  
-**Fix:** Copied the Maven Wrapper (`mvnw`, `mvnw.cmd`, `.mvn/wrapper/`) from an existing local Spring project so builds work without a global Maven install.
-
-**3. Running from the terminal: “URL must start with `jdbc`”**  
-Spring couldn’t build the datasource because **`SPRING_DATASOURCE_URL` was empty or invalid**. Two causes showed up in practice:
-
-- **`.\mvnw.cmd spring-boot:run` does not read `.env.local`**—that file is only loaded when you start via the **Run and Debug / F5** configuration that references `envFile`.
-- **Spaces after `=`** in `.env`-style files (e.g. `URL= jdbc:...`) make the URL invalid.
-
-**Fix:** Either use **F5** with a corrected `.env.local`, or set **`$env:SPRING_DATASOURCE_*`** in the same PowerShell session before `mvnw spring-boot:run`, with **no space** after `=`.
-
-**4. Database user / password memory**  
-You use **`lms_db`** and **`lms_user`**; PostgreSQL doesn’t let you “look up” a forgotten password.  
-**Fix:** Reset the role password with `ALTER ROLE ... PASSWORD` while connected as a superuser (e.g. `postgres`), then put the new value only in env / `.env.local`.
-
-**5. Flyway warning about PostgreSQL 18**  
-Flyway said PG 18 is newer than the versions it officially lists (up to 17).  
-**Outcome:** Migrations still applied successfully; treat it as a heads-up for upgrades later, not a blocker for local dev.
-
-**6. Pushing vs not pushing**  
-Early on the agent pushed a large step-1 commit without you asking for push-only behavior. You asked for **commit without push** by default, then later asked to **push** explicitly—we did that. The Cursor rule now encodes: **push only when you clearly say so in that message.**
-
----
-
-### What is *not* done yet (on purpose)
-
-- **No login / JWT** yet—that’s plan **step 2**.
-- **Thin tests:** one Mockito test; CI does not start Postgres (that’s OK for now but doesn’t prove DB wiring on every CI run).
-
----
-
-### How to run it tomorrow (short reminder)
-
-- Fill **`.env.local`** (no spaces after `=`), or set env vars in the shell.
-- **F5:** “Spring Boot: IslamicLearningCenterApplication”, or terminal with `$env:` set then `.\mvnw.cmd spring-boot:run`.
-- Check **`http://localhost:8080/api/v1/health`**.
-
----
-
-*End of entry for 2026-05-02.*
+That’s it for today.
