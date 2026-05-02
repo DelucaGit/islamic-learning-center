@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot: IslamicLearningCenterApplication",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.islamiclearningcenter.IslamicLearningCenterApplication",
+      "projectName": "islamic-learning-center",
+      "envFile": "${workspaceFolder}/.env.local"
+    }
+  ]
+}

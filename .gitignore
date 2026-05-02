@@ -29,7 +29,10 @@ replay_pid*
 # IDE
 .idea/
 *.iml
-.vscode/
+# Cursor/VS Code: commit launch.json; keep machine-local settings untracked
+.vscode/*
+!.vscode/launch.json
+!.vscode/extensions.json
 *.swp
 
 # Local secrets and env (never commit)

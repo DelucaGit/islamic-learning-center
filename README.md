@@ -35,9 +35,13 @@ See [`env.example`](env.example) for names only. Spring maps `SPRING_DATASOURCE_
 
 **Option B — persist for your user:** `Environment` → **Environment variables** (GUI), or `[Environment]::SetEnvironmentVariable("NAME", "value", "User")` in PowerShell — use **your** values; do not commit them.
 
-**Option C — IDE:** Run/Debug configuration `env` with the same variable names (store the config outside the repo or in a gitignored file if it contains secrets).
+**Option C — Cursor / VS Code (like IntelliJ run config):**  
+1. Copy [`env.example`](env.example) to **`.env.local`** in the project root (that file is **gitignored** via `.env.*`).  
+2. Fill in your real `SPRING_DATASOURCE_*` values (and optionally `SPRING_PROFILES_ACTIVE=local`).  
+3. Open **Run and Debug** (`Ctrl+Shift+D`), choose **“Spring Boot: IslamicLearningCenterApplication”**, press **Start Debugging** (F5).  
+   The launch config is [`.vscode/launch.json`](.vscode/launch.json); it loads `.env.local` only on your machine.
 
-Restart the terminal or IDE after changing user-level variables.
+Restart the terminal or IDE after changing user-level Windows variables (options A/B).
 
 ## Run locally
 
