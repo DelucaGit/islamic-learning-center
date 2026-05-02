@@ -1,0 +1,12 @@
+---
+description: Git workflow — commits only; never push to remote
+alwaysApply: true
+---
+
+# Git: commit only, never push
+
+- You may run **`git add`** and **`git commit`** when the user wants work saved to version control.
+- **Do not run `git push`**, `git push origin`, or any command that updates the remote (including `gh pr create` if it implies push, unless the user explicitly asks to push in that message).
+- The human reviews commits locally and pushes to GitHub when they choose.
+
+If the user explicitly says to push in the same request, follow their explicit instruction for that turn only.
