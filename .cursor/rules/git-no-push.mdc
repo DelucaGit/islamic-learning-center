@@ -1,12 +1,16 @@
 ---
-description: Git workflow — commits only; never push to remote
+description: Git — commit anytime; push only when the user explicitly orders a push
 alwaysApply: true
 ---
 
-# Git: commit only, never push
+# Git: push only when the user says so
 
-- You may run **`git add`** and **`git commit`** when the user wants work saved to version control.
-- **Do not run `git push`**, `git push origin`, or any command that updates the remote (including `gh pr create` if it implies push, unless the user explicitly asks to push in that message).
-- The human reviews commits locally and pushes to GitHub when they choose.
+**Default:** You may **`git add`** and **`git commit`** when saving work to version control.
 
-If the user explicitly says to push in the same request, follow their explicit instruction for that turn only.
+**Push:** Run **`git push`** (or any remote-updating equivalent) **only if the user explicitly tells you to push in that same message** — e.g. “commit and push”, “push to GitHub”, “push origin main”, “run git push”. If they only say “commit” or do not mention push, **do not push**.
+
+**Do not** push because you assume the work is “done”, because CI passed, or to “help” sync the remote — wait for an explicit push instruction.
+
+**Other remotes:** Same rule for `gh pr create` / force-push / etc.: only when the user clearly asks in that turn.
+
+If the user later says “always push after commit” or similar, follow that updated instruction for subsequent turns.
