@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: islamic-learning-center
+  # Set via env: SPRING_PROFILES_ACTIVE (e.g. local, prod). Default local for developer machines.
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  datasource:
+    # Set via env: SPRING_DATASOURCE_URL — JDBC URL (local PostgreSQL / pgAdmin or AWS RDS). Never commit credentials in this file.
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/islamic_learning}
+    # Set via env: SPRING_DATASOURCE_USERNAME
+    username: ${SPRING_DATASOURCE_USERNAME:islamic_learning}
+    # Set via env: SPRING_DATASOURCE_PASSWORD — never commit real passwords; use pgAdmin/local env or Secrets Manager in AWS.
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+---
+# Production-oriented defaults: override via env (RDS URL, secrets). Do not put real values here.
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    # Set via env: SPRING_DATASOURCE_URL — RDS PostgreSQL JDBC URL (sslmode as required by your RDS policy).
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
