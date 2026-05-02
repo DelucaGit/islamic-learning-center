@@ -1,0 +1,16 @@
+---
+description: User reviews agent edits in the UI; no assumption that changes are accepted until they say so
+alwaysApply: true
+---
+
+# Let the user accept or reject changes
+
+The user **reviews agent edits in Cursor themselves**—they do not want changes treated as silently “accepted” without a chance to reject.
+
+**After a task that touches multiple files or non-trivial logic:** end with a **short, plain summary** of what changed (which areas or files), so they can skim the diff or Source Control view and **keep, undo, or partially revert** what they want.
+
+**Do not** imply that “everything is merged and final” unless they explicitly say they are happy with the result.
+
+**Prefer smaller, focused requests** when they want tight control—large refactors are harder to review in one lump.
+
+*(Cursor applies edits as the agent works; the user uses the diff view, **Restore checkpoint** on a message, or git to roll back. For **terminal** auto-approval, they can adjust **Cursor Settings → Agent** / **Ctrl+Shift+J** and turn off broad auto-run if they want every command approved.)*
