@@ -14,41 +14,30 @@ Backend for an Islamic sciences learning platform—Spring Boot, PostgreSQL, JWT
 
 1. **JDK 17** (Temurin or Oracle)
 2. **PostgreSQL** locally and **pgAdmin**
-3. In pgAdmin: your local database is **`lms_db`** with login role **`lms_user`** (password is only in your environment, not in git).
+3. In pgAdmin: create your database and login role; keep the password **only** in environment variables (not in this repo).
 
 ## Configuration
 
-Never commit real passwords or RDS URLs with embedded credentials.
+**No database URL, username, or password is stored in committed files.** Set these on your machine:
 
-Defaults in `application.yml` assume **`lms_db`** and **`lms_user`**; override with env vars if yours differ.
+| Variable | Purpose |
+|----------|---------|
+| `SPRING_DATASOURCE_URL` | Full JDBC URL (`jdbc:postgresql://host:port/database`) |
+| `SPRING_DATASOURCE_USERNAME` | PostgreSQL role name |
+| `SPRING_DATASOURCE_PASSWORD` | That role’s password |
+| `SPRING_PROFILES_ACTIVE` | Optional; e.g. `local` or `prod` |
 
-### Windows: set database credentials as environment variables
+See [`env.example`](env.example) for names only. Spring maps `SPRING_DATASOURCE_*` to `spring.datasource.*`; see comments in [`application.yml`](src/main/resources/application.yml).
 
-**Option A — current PowerShell session only** (good for trying things):
+### Windows: environment variables
 
-```powershell
-$env:SPRING_PROFILES_ACTIVE = "local"
-$env:SPRING_DATASOURCE_URL = "jdbc:postgresql://localhost:5432/lms_db"
-$env:SPRING_DATASOURCE_USERNAME = "lms_user"
-$env:SPRING_DATASOURCE_PASSWORD = "YOUR_PASSWORD_HERE"
-.\mvnw.cmd spring-boot:run
-```
+**Option A — current PowerShell session:** assign `$env:SPRING_DATASOURCE_URL`, `$env:SPRING_DATASOURCE_USERNAME`, `$env:SPRING_DATASOURCE_PASSWORD` (and optionally `$env:SPRING_PROFILES_ACTIVE`), then run `.\mvnw.cmd spring-boot:run`.
 
-**Option B — persist for your Windows user** (new terminals and apps see them after you reopen them):
+**Option B — persist for your user:** `Environment` → **Environment variables** (GUI), or `[Environment]::SetEnvironmentVariable("NAME", "value", "User")` in PowerShell — use **your** values; do not commit them.
 
-```powershell
-[Environment]::SetEnvironmentVariable("SPRING_DATASOURCE_URL", "jdbc:postgresql://localhost:5432/lms_db", "User")
-[Environment]::SetEnvironmentVariable("SPRING_DATASOURCE_USERNAME", "lms_user", "User")
-[Environment]::SetEnvironmentVariable("SPRING_DATASOURCE_PASSWORD", "YOUR_PASSWORD_HERE", "User")
-```
+**Option C — IDE:** Run/Debug configuration `env` with the same variable names (store the config outside the repo or in a gitignored file if it contains secrets).
 
-Close and reopen Cursor/terminal so the app picks them up.
-
-**Option C — GUI:** Settings → System → About → **Advanced system settings** → **Environment variables** → under “User variables”, add `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`.
-
-**Option D — IDE run configuration:** In Cursor/VS Code “Run and Debug”, add the same names under `env` in your launch config (use a **local** file or user settings so secrets are not committed).
-
-See [`env.example`](env.example) for the full list of names. Spring maps `SPRING_DATASOURCE_*` automatically; see comments in [`application.yml`](src/main/resources/application.yml).
+Restart the terminal or IDE after changing user-level variables.
 
 ## Run locally
 
