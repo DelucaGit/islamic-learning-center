@@ -6,9 +6,9 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:local}
   datasource:
     # Set via env: SPRING_DATASOURCE_URL — JDBC URL (local PostgreSQL / pgAdmin or AWS RDS). Never commit credentials in this file.
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/islamic_learning}
-    # Set via env: SPRING_DATASOURCE_USERNAME
-    username: ${SPRING_DATASOURCE_USERNAME:islamic_learning}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/lms_db}
+    # Set via env: SPRING_DATASOURCE_USERNAME (default matches local role lms_user)
+    username: ${SPRING_DATASOURCE_USERNAME:lms_user}
     # Set via env: SPRING_DATASOURCE_PASSWORD — never commit real passwords; use pgAdmin/local env or Secrets Manager in AWS.
     password: ${SPRING_DATASOURCE_PASSWORD:}
   jpa:
