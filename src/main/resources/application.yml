@@ -6,6 +6,9 @@ app:
     refresh-token-ttl: P7D
 
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
   application:
     name: islamic-learning-center
   # Set via env: SPRING_PROFILES_ACTIVE (e.g. local, prod). Default local for developer machines.

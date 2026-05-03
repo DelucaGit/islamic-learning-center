@@ -10,15 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "refresh_tokens")
-@Getter
-@Setter
-@NoArgsConstructor
 public class RefreshToken {
 
   @Id
@@ -49,5 +43,39 @@ public class RefreshToken {
     row.expiresAt = expiresAt;
     row.revoked = false;
     return row;
+  }
+
+  public RefreshToken() {}
+
+  public Long getId() {
+    return id;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public String getTokenHash() {
+    return tokenHash;
+  }
+
+  public Instant getExpiresAt() {
+    return expiresAt;
+  }
+
+  public boolean isRevoked() {
+    return revoked;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
+
+  public boolean isUsableAt(Instant now) {
+    return !revoked && expiresAt.isAfter(now);
+  }
+
+  public void revoke() {
+    this.revoked = true;
   }
 }

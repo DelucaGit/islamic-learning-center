@@ -50,10 +50,25 @@ public class LoginService {
       throw new InvalidCredentialsException();
     }
 
+    return issueTokenPair(user);
+  }
+
+  @Transactional
+  public AccessAndRefreshTokens refresh(String refreshToken) {
+    User user = refreshTokenService.consumeRefreshToken(refreshToken);
+    return issueTokenPair(user);
+  }
+
+  @Transactional
+  public void logout(String refreshToken) {
+    refreshTokenService.revokeIfPresent(refreshToken);
+  }
+
+  private AccessAndRefreshTokens issueTokenPair(User user) {
     String accessToken =
         jwtAccessTokenService.createAccessToken(
             user.getId(), user.getEmail(), user.getRole().name());
-    String refreshToken = refreshTokenService.issueRefreshToken(user);
-    return new AccessAndRefreshTokens(accessToken, refreshToken);
+    String newRefreshToken = refreshTokenService.issueRefreshToken(user);
+    return new AccessAndRefreshTokens(accessToken, newRefreshToken);
   }
 }
