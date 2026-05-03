@@ -1,6 +1,36 @@
 # islamic-learning-center
 
-Backend for an Islamic sciences learning platform—Spring Boot, PostgreSQL, JWT auth (next step), course content on S3, grades, attendance, and payment records. AWS-ready (RDS).
+Backend for an Islamic sciences learning platform—Spring Boot, PostgreSQL, JWT auth (**done**), course content on S3, grades, attendance, and payment records. AWS-ready (RDS).
+
+## Plan & progress
+
+### Step 1 — Foundation (done)
+
+- [x] Spring Boot 3.4, Java 17, Maven (`./mvnw`)
+- [x] PostgreSQL + Flyway (`V1__init_schema.sql`)
+- [x] Core JPA entities + repositories: users, courses, enrollments, payments, refresh tokens
+- [x] Health API: `GET /api/v1/health`
+- [x] Actuator health
+- [x] CI: GitHub Actions runs `./mvnw -B verify`
+- [x] Secrets via environment only (no committed DB passwords or JWT secrets)
+
+### Step 2 — Auth & security (done)
+
+- [x] Spring Security (stateless API, JWT bearer filter)
+- [x] Access JWT (HS256) via `APP_JWT_SECRET` + configurable TTL
+- [x] Opaque refresh tokens (fingerprint stored in DB), rotation on refresh
+- [x] `POST /api/v1/auth/register` — bcrypt password hashing
+- [x] `POST /api/v1/auth/login` — returns access + refresh tokens
+- [x] `POST /api/v1/auth/refresh` — new token pair
+- [x] `POST /api/v1/auth/logout` — revokes refresh token when present
+- [x] Central API error handling (`ApiExceptionHandler`)
+
+### Step 3 — Product APIs (next)
+
+- [ ] Courses API (CRUD, teacher ownership, listing)
+- [ ] Enrollments API (student enroll / teacher view)
+- [ ] Payments API (record status, tie to enrollment where needed)
+- [ ] Later: S3-backed course content, grades, attendance (as designed)
 
 ## Stack (step 1)
 
@@ -26,18 +56,19 @@ Backend for an Islamic sciences learning platform—Spring Boot, PostgreSQL, JWT
 | `SPRING_DATASOURCE_USERNAME` | PostgreSQL role name |
 | `SPRING_DATASOURCE_PASSWORD` | That role’s password |
 | `SPRING_PROFILES_ACTIVE` | Optional; e.g. `local` or `prod` |
+| `APP_JWT_SECRET` | JWT signing secret (**≥ 32 UTF-8 bytes**); required at startup |
 
 See [`env.example`](env.example) for names only. Spring maps `SPRING_DATASOURCE_*` to `spring.datasource.*`; see comments in [`application.yml`](src/main/resources/application.yml).
 
 ### Windows: environment variables
 
-**Option A — current PowerShell session:** assign `$env:SPRING_DATASOURCE_URL`, `$env:SPRING_DATASOURCE_USERNAME`, `$env:SPRING_DATASOURCE_PASSWORD` (and optionally `$env:SPRING_PROFILES_ACTIVE`), then run `.\mvnw.cmd spring-boot:run`.
+**Option A — current PowerShell session:** assign `$env:SPRING_DATASOURCE_URL`, `$env:SPRING_DATASOURCE_USERNAME`, `$env:SPRING_DATASOURCE_PASSWORD`, `$env:APP_JWT_SECRET` (and optionally `$env:SPRING_PROFILES_ACTIVE`), then run `.\mvnw.cmd spring-boot:run`.
 
 **Option B — persist for your user:** `Environment` → **Environment variables** (GUI), or `[Environment]::SetEnvironmentVariable("NAME", "value", "User")` in PowerShell — use **your** values; do not commit them.
 
 **Option C — Cursor / VS Code (like IntelliJ run config):**  
 1. Copy [`env.example`](env.example) to **`.env.local`** in the project root (that file is **gitignored** via `.env.*`).  
-2. Fill in your real `SPRING_DATASOURCE_*` values (and optionally `SPRING_PROFILES_ACTIVE=local`).  
+2. Fill in your real `SPRING_DATASOURCE_*`, `APP_JWT_SECRET`, and optionally `SPRING_PROFILES_ACTIVE=local`.  
 3. Open **Run and Debug** (`Ctrl+Shift+D`), choose **“Spring Boot: IslamicLearningCenterApplication”**, press **Start Debugging** (F5).  
    The launch config is [`.vscode/launch.json`](.vscode/launch.json); it loads `.env.local` only on your machine.
 
@@ -59,6 +90,8 @@ Then:
 
 - Health: [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health)
 - Actuator: [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
+- Auth (JSON `POST`): `/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/refresh`, `/api/v1/auth/logout`  
+  Other `/api/v1/**` routes require `Authorization: Bearer <accessToken>` unless explicitly permitted in security config.
 
 ## Build & tests
 
@@ -70,6 +103,6 @@ Then:
 
 Remote: [https://github.com/DelucaGit/islamic-learning-center](https://github.com/DelucaGit/islamic-learning-center)
 
-## Next (plan step 2)
+## Next (plan step 3)
 
-Spring Security, JWT access + refresh tokens, registration and login.
+Build authenticated REST APIs on top of the existing course/enrollment/payment schema (see **Step 3** in [Plan & progress](#plan--progress) above).

@@ -23,3 +23,17 @@ On the git side, I decided I want commits to happen regularly but pushes only wh
 What’s *not* done: no login, no JWT, no real API beyond health. That’s the next chapter. For today I’m happy that the app boots, talks to my local database, and I can hit the health URL in a browser or Postman.
 
 That’s it for today.
+
+---
+
+## Sunday, May 3, 2026
+
+Shipped **step 2 — auth**: Spring Security with a JWT bearer filter, bcrypt registration, login returning access + refresh tokens, refresh rotation, and logout revoking the refresh token fingerprint. REST lives under `/api/v1/auth/*` with `ApiExceptionHandler` for consistent JSON errors.
+
+Configuration now also requires **`APP_JWT_SECRET`** (long random string, ≥ 32 UTF-8 bytes) alongside the existing datasource env vars; `env.example` and the README table were aligned with that.
+
+Verified end-to-end with Postman (register → login → refresh → logout → health). Hit a port-8080 conflict once when smoke-testing from the terminal; second instance on another port behaved as expected.
+
+Pushed the auth stack to GitHub on `main`. Left a small **TODO** on `EmailAlreadyInUseException` to revisit a friendlier / less enumerable error message for duplicate registration.
+
+**What’s next (step 3):** real APIs for courses, enrollments, and payments on top of the schema we already have — still no S3 content, grades, or attendance yet.
