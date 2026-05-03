@@ -40,4 +40,14 @@ public class RefreshToken {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt = Instant.now();
+
+  /** New row; {@code tokenHash} must be a fingerprint of the opaque token (never store the raw token). */
+  public static RefreshToken forUser(User user, String tokenHash, Instant expiresAt) {
+    RefreshToken row = new RefreshToken();
+    row.user = user;
+    row.tokenHash = tokenHash;
+    row.expiresAt = expiresAt;
+    row.revoked = false;
+    return row;
+  }
 }

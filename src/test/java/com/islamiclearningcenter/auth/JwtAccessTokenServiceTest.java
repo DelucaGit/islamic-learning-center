@@ -25,7 +25,7 @@ class JwtAccessTokenServiceTest {
     @Test
     @DisplayName("rejects blank secret")
     void rejectsBlankSecret() {
-      assertThatThrownBy(() -> new JwtProperties("  ", Duration.ofMinutes(5)))
+      assertThatThrownBy(() -> new JwtProperties("  ", Duration.ofMinutes(5), Duration.ofDays(7)))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessageContaining("secret");
     }
@@ -33,17 +33,25 @@ class JwtAccessTokenServiceTest {
     @Test
     @DisplayName("rejects secret shorter than 32 UTF-8 bytes")
     void rejectsShortSecret() {
-      assertThatThrownBy(() -> new JwtProperties("short", Duration.ofMinutes(5)))
+      assertThatThrownBy(() -> new JwtProperties("short", Duration.ofMinutes(5), Duration.ofDays(7)))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessageContaining("32");
     }
 
     @Test
-    @DisplayName("rejects non-positive TTL")
-    void rejectsNonPositiveTtl() {
-      assertThatThrownBy(() -> new JwtProperties(TEST_SECRET, Duration.ZERO))
+    @DisplayName("rejects non-positive access token TTL")
+    void rejectsNonPositiveAccessTtl() {
+      assertThatThrownBy(() -> new JwtProperties(TEST_SECRET, Duration.ZERO, Duration.ofDays(7)))
           .isInstanceOf(IllegalArgumentException.class)
-          .hasMessageContaining("ttl");
+          .hasMessageContaining("access-token-ttl");
+    }
+
+    @Test
+    @DisplayName("rejects non-positive refresh token TTL")
+    void rejectsNonPositiveRefreshTtl() {
+      assertThatThrownBy(() -> new JwtProperties(TEST_SECRET, Duration.ofMinutes(5), Duration.ZERO))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("refresh-token-ttl");
     }
   }
 
@@ -51,7 +59,8 @@ class JwtAccessTokenServiceTest {
   @DisplayName("createAccessToken then parseValid returns the same claims")
   void createThenParse_returnsClaims() {
     Clock clock = Clock.fixed(Instant.parse("2026-05-01T12:00:00Z"), ZoneOffset.UTC);
-    JwtProperties props = new JwtProperties(TEST_SECRET, Duration.ofMinutes(15));
+    JwtProperties props =
+        new JwtProperties(TEST_SECRET, Duration.ofMinutes(15), Duration.ofDays(7));
     JwtAccessTokenService service = new JwtAccessTokenService(props, clock);
 
     String token = service.createAccessToken(42L, "learner@example.com", "STUDENT");
@@ -65,7 +74,8 @@ class JwtAccessTokenServiceTest {
   @DisplayName("parseValid returns empty when token is expired")
   void parseValid_whenExpired_returnsEmpty() {
     SteppableClock clock = new SteppableClock(Instant.parse("2026-05-01T12:00:00Z"));
-    JwtProperties props = new JwtProperties(TEST_SECRET, Duration.ofNanos(1));
+    JwtProperties props =
+        new JwtProperties(TEST_SECRET, Duration.ofNanos(1), Duration.ofDays(7));
     JwtAccessTokenService service = new JwtAccessTokenService(props, clock);
 
     String token = service.createAccessToken(1L, "a@b.com", "TEACHER");
@@ -79,10 +89,12 @@ class JwtAccessTokenServiceTest {
   void parseValid_whenWrongSecret_returnsEmpty() {
     Clock clock = Clock.fixed(Instant.parse("2026-05-01T12:00:00Z"), ZoneOffset.UTC);
     JwtAccessTokenService signer =
-        new JwtAccessTokenService(new JwtProperties(TEST_SECRET, Duration.ofMinutes(5)), clock);
+        new JwtAccessTokenService(
+            new JwtProperties(TEST_SECRET, Duration.ofMinutes(5), Duration.ofDays(7)), clock);
     JwtAccessTokenService otherVerifier =
         new JwtAccessTokenService(
-            new JwtProperties("abcdefghijklmnopqrstuvwxyz012345", Duration.ofMinutes(5)), clock);
+            new JwtProperties("abcdefghijklmnopqrstuvwxyz012345", Duration.ofMinutes(5), Duration.ofDays(7)),
+            clock);
 
     String token = signer.createAccessToken(9L, "x@y.com", "STUDENT");
 
@@ -94,7 +106,8 @@ class JwtAccessTokenServiceTest {
   void parseValid_whenMalformed_returnsEmpty() {
     Clock clock = Clock.fixed(Instant.parse("2026-05-01T12:00:00Z"), ZoneOffset.UTC);
     JwtAccessTokenService service =
-        new JwtAccessTokenService(new JwtProperties(TEST_SECRET, Duration.ofMinutes(5)), clock);
+        new JwtAccessTokenService(
+            new JwtProperties(TEST_SECRET, Duration.ofMinutes(5), Duration.ofDays(7)), clock);
 
     assertThat(service.parseValid("not-a-jwt")).isEmpty();
   }

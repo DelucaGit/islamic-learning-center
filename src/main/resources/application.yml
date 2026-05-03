@@ -3,6 +3,7 @@ app:
     # HS256 signing secret; must be >= 32 UTF-8 bytes. Set via APP_JWT_SECRET (see env.example).
     secret: ${APP_JWT_SECRET}
     access-token-ttl: PT15M
+    refresh-token-ttl: P7D
 
 spring:
   application:

@@ -4,7 +4,7 @@ import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "app.jwt")
-public record JwtProperties(String secret, Duration accessTokenTtl) {
+public record JwtProperties(String secret, Duration accessTokenTtl, Duration refreshTokenTtl) {
 
   public JwtProperties {
     if (secret == null || secret.isBlank()) {
@@ -16,7 +16,12 @@ public record JwtProperties(String secret, Duration accessTokenTtl) {
           "app.jwt.secret must be at least 32 UTF-8 bytes for HS256 (use a long random string)");
     }
     if (accessTokenTtl == null || accessTokenTtl.isNegative() || accessTokenTtl.isZero()) {
-      throw new IllegalArgumentException("app.jwt.access-token-ttl must be a positive duration");
+      throw new IllegalArgumentException(
+          "app.jwt.access-token-ttl must be a positive duration (access-token-ttl)");
+    }
+    if (refreshTokenTtl == null || refreshTokenTtl.isNegative() || refreshTokenTtl.isZero()) {
+      throw new IllegalArgumentException(
+          "app.jwt.refresh-token-ttl must be a positive duration (refresh-token-ttl)");
     }
   }
 }
