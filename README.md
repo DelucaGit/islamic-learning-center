@@ -25,10 +25,10 @@ Backend for an Islamic sciences learning platform—Spring Boot, PostgreSQL, JWT
 - [x] `POST /api/v1/auth/logout` — revokes refresh token when present
 - [x] Central API error handling (`ApiExceptionHandler`)
 
-### Step 3 — Product APIs (next)
+### Step 3 — Product APIs (in progress)
 
-- [ ] Courses API (CRUD, teacher ownership, listing)
-- [ ] Enrollments API (student enroll / teacher view)
+- [x] Courses API (CRUD, teacher ownership, listing; `GET /api/v1/me/courses` for owned courses)
+- [x] Enrollments API (teacher adds/removes students; `GET /api/v1/me/enrollments` for student)
 - [ ] Payments API (record status, tie to enrollment where needed)
 - [ ] Later: S3-backed course content, grades, attendance (as designed)
 
@@ -91,6 +91,7 @@ Then:
 - Health: [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health)
 - Actuator: [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
 - Auth (JSON `POST`): `/api/v1/auth/register`, `/api/v1/auth/login`, `/api/v1/auth/refresh`, `/api/v1/auth/logout`  
+- Courses & enrollments (Bearer): `GET|POST /api/v1/courses`, `GET|PATCH|DELETE /api/v1/courses/{id}`, `GET /api/v1/me/courses` (teacher); `GET|POST /api/v1/courses/{id}/students`, `DELETE /api/v1/courses/{id}/students/{studentId}` (teacher); `GET /api/v1/me/enrollments` (student)  
   Other `/api/v1/**` routes require `Authorization: Bearer <accessToken>` unless explicitly permitted in security config.
 
 ## Build & tests
@@ -105,4 +106,4 @@ Remote: [https://github.com/DelucaGit/islamic-learning-center](https://github.co
 
 ## Next (plan step 3)
 
-Build authenticated REST APIs on top of the existing course/enrollment/payment schema (see **Step 3** in [Plan & progress](#plan--progress) above).
+**Done:** courses + enrollments REST APIs (see **Step 3** above). **Next:** Payments API, then S3 / grades / attendance per roadmap. Living checklist: [`docs/BACKEND_PLAN.md`](docs/BACKEND_PLAN.md).

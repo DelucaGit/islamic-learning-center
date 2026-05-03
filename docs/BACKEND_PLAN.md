@@ -9,8 +9,8 @@ This file is the **project plan** for the Islamic Learning Center API: architect
 Tick items as you finish (`[x]` = done). IDs match how we talk about work in issues and chats.
 
 - [x] **skeleton-jpa** — Spring Boot 3 + Maven (`pom.xml`, `mvnw`), local PostgreSQL + pgAdmin for dev, JPA entities (User, Course, Enrollment, Payment, RefreshToken) and repositories.
-- [ ] **security-jwt** — Spring Security, BCrypt, JWT access + refresh tokens (persisted refresh), `/auth/refresh`, `ROLE_TEACHER` / `ROLE_STUDENT`.
-- [ ] **course-enrollment-api** — REST: courses CRUD, enrollment, authorization by course owner / enrolled student.
+- [x] **security-jwt** — Spring Security, BCrypt, JWT access + refresh tokens (persisted refresh), `/api/v1/auth/refresh`, `ROLE_TEACHER` / `ROLE_STUDENT` (JWT filter + `@EnableMethodSecurity` / `@PreAuthorize` on product routes).
+- [x] **course-enrollment-api** — REST under `/api/v1`: courses CRUD (teacher-owned), teacher enroll/unenroll/list students per course, student `GET /me/enrollments`; authorization by course owner + role.
 - [ ] **s3-videos** — S3 presigned upload + complete + playback; CourseVideo metadata in DB.
 - [ ] **grades-attendance-payment** — REST: grades, attendance; Payment CRUD and GET payments by user (entity already exists).
 - [ ] **ops-contract** — GitHub repo, README, Actuator, OpenAPI, RDS SSL notes, Testcontainers IT + more Mockito, Spotless, phased CI (`mvn verify` first), then Docker image CI, then CD when AWS is ready.
