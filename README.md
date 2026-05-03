@@ -29,6 +29,7 @@ Backend for an Islamic sciences learning platform—Spring Boot, PostgreSQL, JWT
 
 - [x] Courses API (CRUD, teacher ownership, listing; `GET /api/v1/me/courses` for owned courses)
 - [x] Enrollments API (teacher adds/removes students; `GET /api/v1/me/enrollments` for student)
+- [x] Tryout UI — Next.js app in [`frontend/`](frontend/) (dev proxy to API; see [`frontend/README.md`](frontend/README.md))
 - [ ] Payments API (record status, tie to enrollment where needed)
 - [ ] Later: S3-backed course content, grades, attendance (as designed)
 
@@ -85,6 +86,10 @@ On Windows PowerShell:
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
+
+### Frontend (optional tryout UI)
+
+A small Next.js app lives in [`frontend/`](frontend/). It proxies `/api/v1/*` to your Spring server (set `BACKEND_ORIGIN` in `frontend/.env.local`; see [`frontend/env.local.template`](frontend/env.local.template)). Details: [`frontend/README.md`](frontend/README.md).
 
 Then:
 

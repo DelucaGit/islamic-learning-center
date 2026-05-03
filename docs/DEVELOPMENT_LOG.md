@@ -41,3 +41,23 @@ The auth work is on `main` now. I left a TODO on `EmailAlreadyInUseException` be
 What’s *still* not done is the part that actually feels like a school: courses, enrollments, payments as real APIs, and somewhere down the line S3 for materials plus grades and attendance. Yesterday I said login was the next chapter; today that chapter’s closed, and the next one is building on top of the schema instead of underneath it.
 
 That’s it for today.
+
+---
+
+## Sunday, May 3, 2026 (continued) — tryout frontend
+
+Same calendar day, different mood: I wanted something in a **browser** that hits the real API without living in Postman forever.
+
+We already had courses + enrollments on the wire from earlier work on the branch; this stretch was about a **throwaway Next.js UI** in a `frontend/` folder (same repo, not pretending it’s the final product). I used `create-next-app` with the App Router and Tailwind. The annoying bit everyone hits first: **Spring doesn’t have CORS enabled**, so a page on `localhost:3000` can’t casually call `localhost:8081` from the browser. Fix for local dev: **Next `rewrites()`** so the browser only talks to same-origin `/api/v1/...` and the dev server forwards to Spring. No backend change, which I liked.
+
+Port story again: my API listens on **8081** (`SERVER_PORT` in the root `.env.local`), not the Spring default 8080. The proxy target is **`BACKEND_ORIGIN`** in `frontend/.env.local` (with a checked-in `env.local.template` so I don’t forget the name). If those two ports disagree, you get very confident 404s from the wrong place.
+
+Auth in the UI is deliberately crude: **access + refresh in `localStorage`**, a tiny `fetch` wrapper, and decode the JWT in the client just to show teacher vs student links. I know that’s not how you ship to strangers on the internet; it’s fine for me clicking around on my machine.
+
+**Problem of the day:** ESLint (the React compiler rules bundled with the Next 16 template) yelled about **`setState` synchronously inside `useEffect`**. I wasn’t doing anything exotic—load data on mount—but the rule is strict. **Fix:** defer the first state writes by one tick (`await Promise.resolve()` at the top of the async loader, and `Promise.resolve().then(...)` for the “am I a teacher?” gate). After that, `npm run lint` and `npm run build` both went green. `npm audit` still reports a couple of moderate issues in the dependency tree; I didn’t chase them for a scratch UI.
+
+While testing flows I once thought enrollments were “broken” until I realized I’d pasted the **teacher’s** access token where the student token belonged—403, not empty data. Classic human bug; the API was doing the right thing.
+
+I updated `docs/BACKEND_PLAN.md` with a checked-off line for this tryout frontend so the checklist matches reality, and the root `README` points at `frontend/README.md` for how to run both processes.
+
+That’s really it for this continuation.

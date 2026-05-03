@@ -11,11 +11,12 @@ Tick items as you finish (`[x]` = done). IDs match how we talk about work in iss
 - [x] **skeleton-jpa** — Spring Boot 3 + Maven (`pom.xml`, `mvnw`), local PostgreSQL + pgAdmin for dev, JPA entities (User, Course, Enrollment, Payment, RefreshToken) and repositories.
 - [x] **security-jwt** — Spring Security, BCrypt, JWT access + refresh tokens (persisted refresh), `/api/v1/auth/refresh`, `ROLE_TEACHER` / `ROLE_STUDENT` (JWT filter + `@EnableMethodSecurity` / `@PreAuthorize` on product routes).
 - [x] **course-enrollment-api** — REST under `/api/v1`: courses CRUD (teacher-owned), teacher enroll/unenroll/list students per course, student `GET /me/enrollments`; authorization by course owner + role.
+- [x] **frontend-tryout** — Monorepo `frontend/`: Next.js (App Router) dev server rewrites `/api/v1/*` to Spring (`BACKEND_ORIGIN`, default `http://localhost:8081`); register/login, course list/detail, teacher enroll/remove, `me/courses` + `me/enrollments`. Tokens in `localStorage` for local QA only.
 - [ ] **s3-videos** — S3 presigned upload + complete + playback; CourseVideo metadata in DB.
 - [ ] **grades-attendance-payment** — REST: grades, attendance; Payment CRUD and GET payments by user (entity already exists).
 - [ ] **ops-contract** — GitHub repo, README, Actuator, OpenAPI, RDS SSL notes, Testcontainers IT + more Mockito, Spotless, phased CI (`mvn verify` first), then Docker image CI, then CD when AWS is ready.
 
-**One-line goal:** A clear, review-friendly Spring API for teachers and students (courses, video on S3, grades, attendance, payments), JWT auth, env-only secrets, Maven, Postgres local + RDS in prod; Next.js later.
+**One-line goal:** A clear, review-friendly Spring API for teachers and students (courses, video on S3, grades, attendance, payments), JWT auth, env-only secrets, Maven, Postgres local + RDS in prod; plus a **local tryout** Next.js app in-repo (`frontend/`) until a real web client ships.
 
 ---
 
