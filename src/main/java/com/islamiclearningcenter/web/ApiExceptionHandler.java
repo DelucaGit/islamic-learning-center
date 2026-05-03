@@ -1,7 +1,10 @@
 package com.islamiclearningcenter.web;
 
 import com.islamiclearningcenter.exception.EmailAlreadyInUseException;
+import com.islamiclearningcenter.exception.ForbiddenException;
 import com.islamiclearningcenter.exception.InvalidCredentialsException;
+import com.islamiclearningcenter.exception.NotFoundException;
+import com.islamiclearningcenter.exception.StudentAlreadyEnrolledException;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,21 @@ public class ApiExceptionHandler {
   @ExceptionHandler(InvalidCredentialsException.class)
   public ResponseEntity<Map<String, String>> invalidCredentials(InvalidCredentialsException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
+  }
+
+  @ExceptionHandler(NotFoundException.class)
+  public ResponseEntity<Map<String, String>> notFound(NotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+  }
+
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<Map<String, String>> forbidden(ForbiddenException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", ex.getMessage()));
+  }
+
+  @ExceptionHandler(StudentAlreadyEnrolledException.class)
+  public ResponseEntity<Map<String, String>> alreadyEnrolled(StudentAlreadyEnrolledException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", ex.getMessage()));
   }
 
   @ExceptionHandler(IllegalArgumentException.class)

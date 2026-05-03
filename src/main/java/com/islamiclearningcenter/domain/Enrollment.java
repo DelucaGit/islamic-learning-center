@@ -10,15 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "enrollments")
-@Getter
-@Setter
-@NoArgsConstructor
 public class Enrollment {
 
   @Id
@@ -35,4 +29,38 @@ public class Enrollment {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt = Instant.now();
+
+  public Enrollment() {}
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public Course getCourse() {
+    return course;
+  }
+
+  public void setCourse(Course course) {
+    this.course = course;
+  }
+
+  public User getStudent() {
+    return student;
+  }
+
+  public void setStudent(User student) {
+    this.student = student;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Instant createdAt) {
+    this.createdAt = createdAt;
+  }
 }
