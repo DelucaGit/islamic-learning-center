@@ -61,3 +61,17 @@ While testing flows I once thought enrollments were “broken” until I realize
 I updated `docs/BACKEND_PLAN.md` with a checked-off line for this tryout frontend so the checklist matches reality, and the root `README` points at `frontend/README.md` for how to run both processes.
 
 That’s really it for this continuation.
+
+---
+
+## Tuesday, May 5, 2026
+
+Big day. After what felt like a marathon, the backend is finally up on AWS.
+
+I deployed it with Elastic Beanstalk and wired the database through AWS RDS. None of this was one-click for me. I spent hours chasing environment variable mistakes: wrong names, missing values, profile confusion, and that annoying cycle where the app fails to boot and you have to dig through logs to find the one variable it is actually complaining about. Once the variables were correct and consistent, things started to behave.
+
+Security groups were the other wall I kept running into. I understood them in theory, but in practice it took me a while to really grasp which inbound rules needed to allow what, and from where. I changed them a few times before the app and database could actually talk reliably.
+
+The best moment was finally seeing the deployed URL respond and confirming the backend is reachable in the cloud. It took longer than I wanted, but I learned a lot from the friction, and now I have a real deployed backend instead of just local success.
+
+I am tired, but this was real progress.
